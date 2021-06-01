@@ -28,7 +28,25 @@
             </template> 
         </div>
     </div>
+    <div class="fixed right-0 bottom-0 p-4 m-10 bg-red-400 rounded"
+        x-data="{show: false, message: 'hello'}"
+        x-show="show"
+        x-text="message"
+        @flash.window="
+        message = $event.detail.message;
+        show = true;
+        setTimeout(() => show = false, 1000);
+        "
+    >
+    </div>
     <script>
+        function flash(message) {
+            window.dispatchEvent(new CustomEvent('flash', {
+                detail: {
+                    message: message,
+                }
+            }))
+        }
         function game() {
             return {
                 get flippedCards() {
@@ -62,6 +80,7 @@
                     
                     if (this.flippedCards.length == 2) {
                         if (this.hasMatch) {
+                            flash('you find a match')
                             await pause()
                             this.flippedCards.forEach(card => card.cleared = true)
 
